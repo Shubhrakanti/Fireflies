@@ -1,7 +1,14 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
+const utils = lib.utils({
+  service: 'slack-app'
+});
+
 
 /**
-* channel_join event
+* message event
+*
+*   All events use this template, simply create additional files with different
+*   names to add event responses
 *
 *   See https://api.slack.com/events-api for more details.
 *
@@ -14,8 +21,15 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 */
 module.exports = (user, channel, text = '', event = {}, botToken = null, callback) => {
 
-  callback(null, {
-    text: `Hello <@${user}>, I got your file`
-  });
+  utils.log("in the JS file");
+
+  // Only send a response to certain messages
+  if (text.match(/hey|hello|hi|sup/i)) {
+    callback(null, {
+      text: `Hey there! <@${user}> said ${text}`
+    });
+  } else {
+    callback(null, {});
+  }
 
 };

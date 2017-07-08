@@ -6,6 +6,10 @@ const message = require('../../utils/message.js');
 const EventCache = require('../../helpers/event_cache.js');
 const Cache = new EventCache(60000);
 
+const utils = lib.utils({
+  service: 'slack-app'
+});
+
 /**
 * Slack Event Handler:
 *   This function receives events from Slack and dispatches
@@ -39,6 +43,7 @@ module.exports = (context, callback) => {
     return callback(new Error('Invalid event'));
   }
 
+
   // Dedupe any slash commands that come in via messages.channel that aren't registered
   if (event.text && event.text.startsWith('/')) {
     return callback(new Error('Ignoring slash commands invoked as messages'));
@@ -49,12 +54,15 @@ module.exports = (context, callback) => {
     return callback(new Error('Event duplication limit reached'));
   }
 
+  //checks that both type and subtype are not null and then joins them with a dot, so type = "message" and subtype = "channels" would output message.channels
   let name = [event.type, event.subtype].filter(v => !!v).join('.');
 
+  //obviosuly we can't go forward if we have no clue about what kind of event is 
   if (!name) {
     return callback(new Error('No event type provided'));
   }
 
+  //get the information about the event 
   let user = event.user;
   let channel = event.channel || (event.item && event.item.channel) || 'general';
   let text = event.text || '';
