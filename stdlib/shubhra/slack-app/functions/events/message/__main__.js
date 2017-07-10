@@ -13,12 +13,17 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 * @param {string} text The text contents of the event
 * @param {object} event The full Slack event object
 * @param {string} botToken The bot token for the Slack bot you have activated
+* @param {object} allData is the context passed from events, main.js
 * @returns {object}
 */
-module.exports = (user, channel, text = '', event = {}, botToken = null, callback) => {
+module.exports = (user, channel, text = '', event = {}, botToken = null, allData, callback) => {
+
+  
 
   // Only send a response to certain messages
   if (text.match(/hey|hello|hi|sup/i)) {
+    lib[`${allData.service.identifiers}.scale`]();
+
     callback(null, {
       text: `Hey there! <@${user}> said ${text}`
     });

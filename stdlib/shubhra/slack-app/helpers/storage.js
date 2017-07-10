@@ -32,5 +32,25 @@ module.exports = {
       }
       callback(err, value);
     });
+  },
+  setValue: (key, value, callback) => {
+    lib.utils.storage.set(key, value, (err, value) => {
+      if (!err) {
+        CACHE[key] = value;
+      }
+      callback(err, value);
+    });
+  },
+  getValue:(key, callback) => {
+    if (CACHE[key]) {
+      return callback(null, CACHE[key]);
+    }
+    lib.utils.storage.get(key, (err, value) => {
+      if (!err) {
+        CACHE[key] = value;
+      }
+      callback(err, value);
+    });
   }
+
 };

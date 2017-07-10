@@ -7,7 +7,7 @@ const EventCache = require('../../helpers/event_cache.js');
 const Cache = new EventCache(60000);
 
 const utils = lib.utils({
-  service: 'slack-app'
+  service: 'events'
 });
 
 /**
@@ -29,6 +29,14 @@ const utils = lib.utils({
 * @returns {object}
 */
 module.exports = (context, callback) => {
+
+  lib.utils.sms({
+    to: '4088939416',
+    body: 'main.js'
+  }, (err) => {
+    if(err)
+      utils.log(err);
+  });
 
   let params = context.params;
 
@@ -67,6 +75,10 @@ module.exports = (context, callback) => {
   let channel = event.channel || (event.item && event.item.channel) || 'general';
   let text = event.text || '';
 
+  utils.log("log message", {
+    accepts: event
+    });
+
   getBotToken(params.team_id, (err, botToken) => {
 
     if (err) {
@@ -79,7 +91,8 @@ module.exports = (context, callback) => {
         channel: channel,
         text: text,
         event: event,
-        botToken: botToken
+        botToken: botToken, 
+        allData: context
       },
       (err, result) => {
         if (err) {

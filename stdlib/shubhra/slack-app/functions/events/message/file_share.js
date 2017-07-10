@@ -1,9 +1,4 @@
 const lib = require('lib')({token: process.env.STDLIB_TOKEN});
-const utils = lib.utils({
-  service: 'slack-app'
-});
-
-
 /**
 * message event
 *
@@ -17,19 +12,25 @@ const utils = lib.utils({
 * @param {string} text The text contents of the event
 * @param {object} event The full Slack event object
 * @param {string} botToken The bot token for the Slack bot you have activated
+* @param {object} allData is the context passed from events, main.js
 * @returns {object}
 */
-module.exports = (user, channel, text = '', event = {}, botToken = null, callback) => {
+module.exports = (user, channel, text = '', event = {}, botToken = null, allData, callback) => {
 
-  utils.log("in the JS file");
+  if(event.file && event.file.filetype == "csv"){
 
-  // Only send a response to certain messages
-  if (text.match(/hey|hello|hi|sup/i)) {
+    lib[`${allData.service.identifiers}.scale`](
+      null, 
+      null
+    );
+    
     callback(null, {
-      text: `Hey there! <@${user}> said ${text}`
+      text: `Hey there <@${user}>. I got your file and I'm going to start processing it now`
     });
   } else {
-    callback(null, {});
+    callback(null, {
+          text: "Sorry incorrect format"
+        });
   }
-
+  
 };

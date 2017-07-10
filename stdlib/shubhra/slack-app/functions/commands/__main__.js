@@ -2,6 +2,11 @@ const lib = require('lib')({token: process.env.STDLIB_TOKEN});
 
 const getBotToken = require('../../helpers/get_bot_token.js');
 const respond = require('../../utils/respond.js');
+const storage = require('../../helpers/storage.js');
+
+const utils = lib.utils({
+  service: 'slash_commands'
+});
 
 /**
 * Slack Slash Command Handler:
@@ -28,12 +33,34 @@ module.exports = (context, callback) => {
   }
 
   let name = command.command.substr(1);
+  
+    utils.log('log message', {
+      accepts:command
+    });
+  
+  if(name == 'hello')
+    storage.setValue('hello', true, (err, value) =>{
+      utils.log(`hello value is ${value}`)
+    });
+  else if(name === 'description')
+    storage.setValue('description', true, (err, value) =>{
+      utils.log(`description value is ${value}`)
+    });
+  else if(name === 'categories')
+    storage.setValue('categories', true, (err, value) =>{
+      utils.log(`catagories value is ${value}`)
+    });
+
+
+    
 
   getBotToken(command.team_id, (err, botToken) => {
 
     if (err) {
       callback(err);
     }
+
+    utils.log(`Loook no further ${context.service.identifier}.commands.${name}`);
 
     lib[`${context.service.identifier}.commands.${name}`](
       {
